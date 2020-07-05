@@ -1,4 +1,6 @@
 # img_dir_walk
+
+```
 usage: img_dir_walk.py [-h] -i DIR -o STR [-v]
 
 Determines file paths of child directories that contain medical images, and
@@ -16,3 +18,4 @@ Required arguments:
 
 Optional arguments:
   -v, --verbose         Enables verbose output to screen.
+```

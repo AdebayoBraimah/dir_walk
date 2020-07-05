@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-'''working doc-string'''
+'''
+Determines file paths of child directories that contain medical images, and their corresponding image types from some parent directory. 
+Output files consists of lists written to text files with '.dir_list.txt' and '.type_list.txt' appended to them.
+'''
 
 # Import packages & modules
 import os
@@ -76,9 +79,9 @@ def img_dir_list(directory,verbose=False):
                 if '.dcm' in file.lower() or '.PAR' in file.upper() or '.nii' in file.lower():
                     file_name = os.path.join(root,file)
                     if '.dcm' in file.lower():
-                        dir_name = os.path.dirname(os.path.dirname(file_name))
+                        dir_name = os.path.abspath(os.path.dirname(os.path.dirname(file_name)))
                     else:
-                        dir_name = os.path.dirname(file_name)
+                        dir_name = os.path.abspath(os.path.dirname(file_name))
                     # print(dir_name)
                     tmp_list = [dir_name]
                     dir_names.extend(tmp_list)
@@ -145,4 +148,43 @@ def generate_img_list(directory,out_prefix,verbose=False):
 
 if __name__ == "__main__":
 
-    
+     # Argument parser
+    parser = argparse.ArgumentParser(description="Determines file paths of child directories that contain medical images, and their corresponding image types from some parent directory. \
+                                    Output files consists of lists written to text files with '.dir_list.txt' and '.type_list.txt' appended to them.")
+
+    # Parse Arguments
+    # Required Arguments
+    reqoptions = parser.add_argument_group('Required arguments')
+    reqoptions.add_argument('-i', '--image-dir',
+                            type=str,
+                            dest="img_dir",
+                            metavar="DIR",
+                            required=True,
+                            help="Parent image directory.")
+    reqoptions.add_argument('-o', '--output',
+                            type=str,
+                            dest="out_file",
+                            metavar="STR",
+                            required=True,
+                            help="Output files' prefix.")
+
+    # Optional Arguments
+    optoptions = parser.add_argument_group('Optional arguments')
+    optoptions.add_argument('-v','--verbose',
+                            dest="verbose",
+                            required=False,
+                            action="store_true",
+                            help="Enables verbose output to screen.")
+
+    args = parser.parse_args() 
+
+    # Print help message in the case
+    # of no arguments
+    try:
+        args = parser.parse_args()
+    except SystemExit as err:
+        if err.code == 2:
+            parser.print_help()
+
+    # Run 
+    args.out_file = generate_img_list(directory=args.img_dir,out_prefix=args.out_file,verbose=args.verbose)
